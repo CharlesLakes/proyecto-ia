@@ -26,7 +26,6 @@ double eval_function(vector<ll> &values,vector<airplane_data> &airplanes,ll pos 
             ans += (double) (values[j] > values[i] && values[j] - values[i] < S1[j])*penalization;
         }
         ans += g*max(0LL,T - values[i]) + h*max(0LL,values[i] - T);
-        //cout << ans << endl;
     }
     return ans;
 }
@@ -78,10 +77,10 @@ int main(){
     vector<airplane_data> airplanes = read_data();
     vector<ll> ans = gready_construction(airplanes);
     cout << "Cost (real): " << eval_function(ans,airplanes,0,0) << endl;
-    cout << "Airplanes: ";
-    forn(i,0,ans.size()) cout << i + 1 << " "; cout << endl;
-    cout << "x_i: ";
-    for(ll a: ans) cout << a << " "; cout << endl;
+    cout << "Airplanes:\t";
+    forn(i,0,ans.size()) cout << i + 1 << "\t"; cout << endl;
+    cout << "Time(x_i):\t";
+    for(ll a: ans) cout << a << "\t"; cout << endl;
 
     return 0;
 }
