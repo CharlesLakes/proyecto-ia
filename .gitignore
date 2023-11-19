@@ -1,5 +1,4 @@
-main.o
-main
+*.o
 .vscode
 *.pdf
 *.zip
