@@ -9,4 +9,17 @@
 #define double long double
 #define fastio ios_base::sync_with_stdio(false),cin.tie(NULL);
 
+
+using namespace std;
+
+struct airplane_data{
+    ll e,t,l;
+    double g,h;
+    vector<ll> times;
+};
+vector<ll> get_optimal_positions(vector<ll> positions,vector<airplane_data> airplanes);
+double eval_function(vector<ll> &values,vector<airplane_data> &airplanes,ll = 0,ll = 1000);
+vector<ll> gready_construction(vector<airplane_data> &airplanes);
+vector<ll> get_order(vector<ll> ans); vector<ll> get_revserse_order(vector<ll> positions,vector<ll> values);
+
 #endif
