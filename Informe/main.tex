@@ -1,0 +1,315 @@
+\documentclass[letter, 10pt]{article}
+\usepackage[latin1]{inputenc}
+%%\usepackage[spanish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{comment} 
+\usepackage[dvips]{graphicx}
+\usepackage{url}
+\usepackage[top=3cm,bottom=3cm,left=3.5cm,right=3.5cm,footskip=1.5cm,headheight=1.5cm,headsep=.5cm,textheight=3cm]{geometry}
+
+
+\begin{document}
+\title{Inteligencia Artificial \\ \begin{Large}Informe Final: Aircraft Landing Scheduling Problem (ALSP) \end{Large}}
+\author{Carlos Lagos Cort\'es}
+\date{\today}
+\maketitle
+
+
+%--------------------No borrar esta secci\'on--------------------------------%
+\section*{Evaluaci\'on}
+
+\begin{tabular}{ll}
+C\'odigo Fuente (20\%): &  \underline{\hspace{2cm}}\\
+Representaci\'on (15\%):  & \underline{\hspace{2cm}} \\
+Descripci\'on del algoritmo (20\%):  & \underline{\hspace{2cm}} \\
+Experimentos (10\%):  & \underline{\hspace{2cm}} \\
+Resultados (10\%):  & \underline{\hspace{2cm}} \\
+Conclusiones (20\%): &  \underline{\hspace{2cm}}\\
+Bibliograf\'ia (5\%): & \underline{\hspace{2cm}}\\
+ &  \\
+\textbf{Nota Final (100)}:   & \underline{\hspace{2cm}}
+\end{tabular}
+%---------------------------------------------------------------------------%
+
+\begin{abstract}
+Este informe aborda el problema de programaci\'on de aterrizaje de aeronaves (ALP), examinando la investigaci\'on actual en aspectos est\'aticos y din\'amicos, desde la formulaci\'on MILP hasta enfoques h\'ibridos. Se destaca la adaptaci\'on de soluciones est\'aticas para aeropuertos con alto tr\'afico a\'ereo. Adem\'as, se presenta una implementaci\'on y an\'alisis de una soluci\'on usando Tabu Search y Greedy, explorando su eficacia. El informe menciona diversos algoritmos y heur\'isticas, resaltando la diversidad de soluciones disponibles. La elecci\'on del enfoque depende de caracter\'isticas espec\'ificas y objetivos. Se subraya la evoluci\'on continua de la investigaci\'on en ALP y la importancia de abordar desaf\'ios emergentes, como la gesti\'on del tr\'afico a\'ereo complejo y la sostenibilidad. En resumen, el ALP es un campo din\'amico en b\'usqueda constante de mejoras para la eficiencia y seguridad a\'erea.
+
+
+\end{abstract}
+
+\section{Introducci\'on}
+El Aircraft Landing Scheduling Problem (ALSP) representa un reto de optimizaci\'on de gran relevancia en la industria de la aviaci\'on, y su origen se encuentra arraigado en la imperante necesidad de mejorar tanto la eficiencia operativa como la experiencia del pasajero. Este problema tiene como objetivo fundamental la reducci\'on del tiempo de espera para los pasajeros en los aeropuertos, as\'i como la disminuci\'on de los costos asociados al mantenimiento de aviones en el aire. En esencia, la misi\'on subyacente en el ALSP es abordar esta problem\'atica de manera estrat\'egica, buscando una soluci\'on que minimice tanto el tiempo de inactividad de las aeronaves en el aeropuerto como el costo relacionado con el incumplimiento de los tiempos \'optimos de aterrizaje. Este enfoque no solo tiene un impacto directo en la puntualidad de los vuelos y la eficiencia de las operaciones a\'ereas, sino que tambi\'en conlleva beneficios econ\'omicos significativos. \\
+
+Este desaf\'io de optimizaci\'on surge de la necesidad apremiante de perfeccionar la programaci\'on de aterrizajes de aeronaves. En el contexto de este problema, se definen diversos intervalos de tiempo durante los cuales una aeronave puede efectuar su aterrizaje, y para cada uno de estos intervalos se establece un punto \'optimo de llegada. Adem\'as, se introduce un concepto cr\'itico: el costo asociado tanto a aterrizar antes como despu\'es del momento \'optimo. Es crucial destacar que, en medio de este rompecabezas de programaci\'on, existe un intervalo de tiempo predeterminado entre los aterrizajes de diferentes vuelos. \\
+
+El prop\'osito principal de este documento es realizar un completo an\'alisis del estado del arte en el campo del Aircraft Landing Scheduling Problem (ALSP). Nuestra meta es examinar investigaciones previas y las soluciones propuestas, as\'i como explorar las distintas variantes de este problema. Adem\'as, buscamos contribuir a la resoluci\'on del ALSP al contrastar diferentes enfoques y estrategias. \\
+
+La estructura del informe ha sido concebida con el prop\'osito de ofrecer una visi\'on completa y detallada del Aircraft Landing Scheduling Problem (ALSP). Se inicia estableciendo una s\'olida base al proporcionar una definici\'on precisa del problema, explorando su objetivo principal y las restricciones que afectan su resoluci\'on. Esto permite obtener una comprensi\'on s\'olida de su alcance y complejidad. En la secci\'on "Estado del Arte", se sumergir\'a en la investigaci\'on previa relacionada con el ALSP. Este an\'alisis en profundidad facilitar\'a la identificaci\'on de tendencias, enfoques y soluciones que han surgido a lo largo del tiempo. Comprendiendo la evoluci\'on de este campo, el informe estar\'a mejor preparado para identificar oportunidades y desaf\'ios actuales en la gesti\'on de aterrizajes de aeronaves. Posteriormente, se adoptar\'a un enfoque m\'as t\'ecnico al abordar el problema desde una perspectiva matem\'atica. Se definir\'an de manera precisa las restricciones y la funci\'on objetivo fundamentales para la optimizaci\'on en el ALSP. Este an\'alisis matem\'atico proporcionar\'a una base s\'olida para la evaluaci\'on y comparaci\'on de soluciones propuestas en la literatura. Despu\'es de establecer el modelo matem\'atico, el informe avanzar\'a planteando, desarrollando y analizando una soluci\'on mediante enfoques de greedy y tabu search. Estos m\'etodos permitir\'an explorar diversas estrategias para la resoluci\'on del ALSP, evaluando su eficacia y eficiencia en la pr\'actica. Seguidamente, se llevar\'a a cabo un an\'alisis de los resultados obtenidos, permitiendo evaluar la efectividad de las estrategias empleadas. Este examen cr\'itico proporcionar\'a insights valiosos sobre la viabilidad y eficacia de las soluciones propuestas. Finalmente, en la secci\'on de "Conclusiones", se consolidar\'an los aspectos m\'as destacados y cr\'iticos del informe. Aqu\'i, se resumir\'an los datos clave, se destacar\'an las tendencias m\'as significativas y se ofrecer\'a una visi\'on general que refleje el estado actual del ALSP, incluyendo las lecciones aprendidas del an\'alisis de resultados. Este resumen permitir\'a a los lectores comprender de manera concisa y precisa los aspectos m\'as importantes del problema y las investigaciones relacionadas. \\
+
+
+La motivaci\'on subyacente para abordar el Aircraft Landing Scheduling Problem (ALSP) reside en la b\'usqueda constante de la industria de la aviaci\'on por mejorar la eficiencia y la calidad de los servicios ofrecidos. El ALSP tiene un impacto directo en la puntualidad de los vuelos, la reducci\'on de costos operativos y, en \'ultima instancia, en la experiencia del pasajero. Al resolver este desaf\'io de optimizaci\'on, no solo se optimizan los horarios de aterrizaje de las aeronaves, sino que tambi\'en se contribuye a minimizar las incomodidades para los viajeros y a reducir la carga ambiental causada por vuelos innecesarios. En esencia, el ALSP se presenta como un componente esencial en la mejora global de la gesti\'on de operaciones a\'ereas, impulsando as\'i un sector de la aviaci\'on m\'as eficiente, sostenible y orientado hacia la satisfacci\'on del cliente. Esta motivaci\'on impulsa a los investigadores a abordar y resolver de manera efectiva el ALSP, con el objetivo de avanzar en la excelencia operativa en la industria de la aviaci\'on.
+
+\section{Definici\'on del Problema}
+El Aircraft Landing Scheduling Problem (ALSP), en el contexto de la gesti\'on del tr\'afico a\'ereo, se define como el desaf\'io de asignar a cada aeronave que ingresa al rango de radar de control de tr\'afico a\'ereo en un aeropuerto un tiempo de aterrizaje, tambi\'en conocido como "broadcast time", y, en caso de que se utilicen m\'ultiples pistas de aterrizaje, asignarle una pista espec\'ifica. Este tiempo de aterrizaje debe estar dentro de una ventana de tiempo espec\'ifica, la cual est\'a definida por un l\'imite temprano y un l\'imite tard\'io, que pueden variar entre aeronaves. El l\'imite temprano representa el momento m\'as temprano en que una aeronave puede aterrizar si vuela a su velocidad m\'axima, mientras que el l\'imite tard\'io representa el \'ultimo momento en que puede aterrizar si vuela a su velocidad m\'as eficiente en cuanto a consumo de combustible, y adem\'as, puede requerir realizar c\'irculos durante el tiempo m\'aximo permitido. \\
+
+Cada aeronave, en su operaci\'on normal, dispone de una velocidad de crucero preferida, la cual es la velocidad \'optima para el consumo de combustible y la eficiencia del vuelo en condiciones est\'andar. Esta velocidad de crucero preferida es un factor cr\'itico en la gesti\'on, ya que permite a las aeronaves operar de manera m\'as eficiente desde el punto de vista econ\'omico y ambiental. Cuando una aeronave recibe su "tiempo preferido" por parte del control de tr\'afico a\'ereo, significa que se le ha asignado un horario de aterrizaje que le permite mantener su velocidad de crucero preferida durante la fase de aproximaci\'on y aterrizaje. Esto es altamente deseable para las aerol\'ineas, ya que minimiza el consumo de combustible y, por lo tanto, reduce los costos operativos y la huella de carbono de la aeronave. Sin embargo, en la pr\'actica, es com\'un que las aeronaves deban realizar ajustes en su velocidad durante la aproximaci\'on y el aterrizaje debido a las instrucciones de control de tr\'afico a\'ereo o a las condiciones del tr\'afico a\'ereo en ese momento espec\'ifico. Estos ajustes pueden implicar reducir la velocidad para mantener una separaci\'on segura entre aeronaves, acelerar para evitar retrasos, o mantener una velocidad constante durante un per\'iodo de espera en el aire. Cualquier desviaci\'on de la velocidad de crucero preferida incurre en un costo adicional para la aerol\'inea, ya que implica un mayor consumo de combustible y, en algunos casos, una p\'erdida de eficiencia operativa. Este costo adicional asociado con la diferencia entre el tiempo de aterrizaje asignado y el tiempo preferido puede variar dependiendo de diversos factores, como la distancia entre la posici\'on actual de la aeronave y el aeropuerto, las condiciones meteorol\'ogicas y las instrucciones espec\'ificas de control de tr\'afico a\'ereo. La optimizaci\'on del ALSP busca minimizar estos costos adicionales al asignar horarios de aterrizaje que se acerquen lo m\'as posible a los tiempos preferidos de las aeronaves, garantizando al mismo tiempo un flujo de tr\'afico seguro y eficiente en el aeropuerto. \\
+
+El concepto de "tiempo de separaci\'on" en el contexto del Aircraft Landing Scheduling Problem (ALSP) desempe\~{n}a un papel crucial en la gesti\'on de tr\'afico a\'ereo y la seguridad de las operaciones a\'ereas. Este tiempo de separaci\'on es el intervalo m\'inimo requerido entre el aterrizaje de una aeronave en particular y el aterrizaje de cualquier aeronave sucesiva en la misma pista de aterrizaje. La determinaci\'on de estos tiempos de separaci\'on no es arbitraria; en cambio, se basa en consideraciones aerodin\'amicas y de seguridad altamente especializadas. Uno de los factores m\'as significativos que influyen en estos tiempos es la generaci\'on de turbulencia en el aire, conocida como "v\'ortices de estela", por parte de las aeronaves que aterrizan. Los v\'ortices de estela pueden tener un efecto notable en la estabilidad de otras aeronaves que siguen la misma trayectoria de vuelo. Por lo tanto, es esencial establecer un intervalo seguro entre aterrizajes para mitigar los riesgos asociados con esta turbulencia. Cabe destacar que estas restricciones de separaci\'on tambi\'en se aplican durante las operaciones de despegue. Cuando una aeronave despega, genera v\'ortices de estela detr\'as de ella, y otras aeronaves que est\'an pr\'oximas en el espacio a\'ereo deben mantener un tiempo de separaci\'on seguro para evitar la influencia de estas turbulencias y garantizar una operaci\'on segura. En resumen, el tiempo de separaci\'on es una consideraci\'on fundamental en la planificaci\'on y la programaci\'on de aterrizajes y despegues en un aeropuerto. Estas restricciones son esenciales para salvaguardar la seguridad de las operaciones a\'ereas y asegurar que las aeronaves puedan aterrizar y despegar de manera eficiente y sin riesgos en entornos de tr\'afico a\'ereo concurridos. La optimizaci\'on del ALSP debe tener en cuenta estas restricciones de separaci\'on para garantizar que las aeronaves operen de manera segura y fluida en el aeropuerto. \\
+ 
+La formulaci\'on propuesta por Beasly ha sido un hito fundamental en la comprensi\'on y el abordaje del Aircraft Landing Scheduling Problem (ALSP), tanto en su versi\'on est\'atica como en su versi\'on din\'amica~\cite{Beasley2004}. Beasly ha proporcionado una s\'olida base conceptual que ha permitido a la comunidad acad\'emica y a la industria a\'erea desarrollar soluciones efectivas para enfrentar este desaf\'io de manera m\'as eficiente y precisa. Lo que hace que la formulaci\'on de Beasly sea particularmente valiosa es que establece los par\'ametros esenciales y las consideraciones clave que rodean el ALSP en sus diversas variantes. En el caso est\'atico~\cite{beasley1990scheduling}, Beasly define con precisi\'on los elementos clave del problema, como los tiempos de aterrizaje, las velocidades preferidas y los tiempos de separaci\'on, lo que ha proporcionado un marco de trabajo coherente y ampliamente aceptado en la comunidad acad\'emica y de la industria. Sin embargo, Beasly tambi\'en ha contribuido significativamente al estudio del ALSP en su versi\'on din\'amica~\cite{Beasley2004}, que considera cambios en las condiciones operativas en tiempo real. Esta variante del problema agrega un nivel adicional de complejidad al ALSP y requiere estrategias de programaci\'on en tiempo real para abordar las din\'amicas cambiantes del tr\'afico a\'ereo. En resumen, la formulaci\'on de Beasly ha desempe\~{n}ado un papel fundamental al proporcionar una base s\'olida y unificada tanto para el caso est\'atico como para el caso din\'amico del ALSP. Su influencia se ha extendido tanto en la academia como en la industria a\'erea, facilitando avances significativos en la gesti\'on de operaciones a\'ereas y asegurando una base com\'un para la investigaci\'on y el desarrollo continuos en este campo cr\'itico. \\
+
+La complejidad del Aircraft Landing Scheduling Problem (ALSP) se manifiesta en su clasificaci\'on como un problema NP-hard~\cite{IKLI2021105336}, indicando que encontrar una soluci\'on \'optima podr\'ia requerir un tiempo exponencial en relaci\'on con el tama\~{n}o del problema. Aunque se reconoce su complejidad, hasta el momento no se ha logrado demostrar que el ALSP sea NP-completo. Esta incertidumbre resalta la singularidad y desaf\'io inherente a este problema en particular. Adem\'as, el ALSP comparte similitudes notables con el problema job-shop, acentuando su complejidad al abordar cuestiones relacionadas con la asignaci\'on de recursos y la optimizaci\'on de horarios. La comprensi\'on de estas caracter\'isticas fundamentales es esencial para desarrollar enfoques efectivos y estrategias heur\'isticas que aborden de manera eficiente los desaf\'ios planteados por el ALSP.
+
+\section{Estado del Arte}
+En las primeras etapas del estudio en el campo de la planificaci\'on y programaci\'on de vuelos, conocido como \textit{Aircraft Scheduling and Routing}, se abordaba la gesti\'on de las operaciones de las aeronaves desde una perspectiva amplia y generalizada. Este campo de investigaci\'on se centraba en aspectos fundamentales de la operaci\'on de las aeronaves, incluyendo la programaci\'on de horarios de despegue y aterrizaje, la determinaci\'on de rutas y escalas \'optimas, y la identificaci\'on de momentos estrat\'egicos para el despegue. Estas \'areas de estudio formaban la base esencial para la gesti\'on eficiente y segura de las operaciones a\'ereas.
+
+Sin embargo, para comprender m\'as en profundidad c\'omo se abordaban estos aspectos y c\'omo se aplicaban en la pr\'actica, es crucial mencionar que las siguientes \'areas espec\'ificas de investigaci\'on se extrajeron del documento de \textbf{Maurice Pollack}~\cite{pollack1974}:
+
+\begin{enumerate}
+    \item \textbf{"Selection of Flight Departure Times" (Selecci\'on de Horarios de Salida de Vuelos):} Esta \'area se centraba en la toma de decisiones estrat\'egicas relacionadas con los horarios de partida de vuelos individuales. La elecci\'on precisa del momento en que una aeronave deb\'ia despegar era crucial para garantizar una programaci\'on eficiente y satisfacer las demandas de los pasajeros y la capacidad de la flota.
+
+    \item \textbf{"Minimum Fleet Procedure" (Procedimiento de Flota M\'inima):} El concepto de determinar la flota de aeronaves necesaria para cubrir una programaci\'on de vuelos espec\'ifica se convirti\'o en un enfoque cr\'itico. La eficiencia operativa y la rentabilidad depend\'ian en gran medida de la capacidad de determinar la cantidad m\'inima de aeronaves requeridas para operar con eficacia.
+
+    \item \textbf{"Aircraft Cycle Diagrams" (Diagramas de Ciclo de Aeronaves):} La representaci\'on visual de los ciclos de operaci\'on de las aeronaves, que inclu\'ian tiempos de vuelo, tiempos en tierra y procesos de mantenimiento, se utilizaba para comprender y analizar la utilizaci\'on de la flota de aeronaves a lo largo del tiempo. Estos diagramas proporcionaban una visi\'on completa de la programaci\'on y el uso de recursos.
+
+    \item \textbf{"Evaluation of Results" (Evaluaci\'on de Resultados):} La fase de evaluaci\'on y an\'alisis de los resultados obtenidos a partir de las programaciones y rutas propuestas era esencial para la mejora continua de los procedimientos de programaci\'on de vuelos. Este enfoque permit\'ia ajustar y optimizar las operaciones en funci\'on de datos y resultados reales.
+\end{enumerate}
+
+Estas \'areas de estudio, extra\'idas del documento de Maurice Pollack~\cite{pollack1974}, representan componentes clave en la planificaci\'on y programaci\'on de vuelos en la industria de la aviaci\'on. A lo largo del tiempo, la investigaci\'on en estos campos ha evolucionado y se ha especializado a\'un m\'as, dando lugar a enfoques m\'as espec\'ificos como el \textit{Aircraft Landing Scheduling Problem (ALSP)}, que se centra en la programaci\'on de aterrizajes para garantizar la eficiencia y seguridad en los aeropuertos. \\
+
+El art\'iculo titulado \textit{"Scheduling Aircraft Landings - The Static Case"}~\cite{beasley1990scheduling}, representa una contribuci\'on significativa en la investigaci\'on de la programaci\'on de aterrizajes de aeronaves en aeropuertos. Este trabajo aborda el desafiante problema de coordinar y secuenciar los aterrizajes de aviones de manera eficiente, un aspecto crucial para garantizar la seguridad y la fluidez de las operaciones a\'ereas en entornos aeroportuarios. La piedra angular de este art\'iculo es la presentaci\'on de una formulaci\'on de programaci\'on lineal entera mixta (MILP) dise\~{n}ada espec\'ificamente para abordar el caso est\'atico del problema de programaci\'on de aterrizajes. Esta formulaci\'on se erige como una herramienta matem\'atica poderosa que permite a los investigadores y profesionales de la aviaci\'on abordar este reto con un alto grado de precisi\'on. Fundamentada en la premisa de que cada avi\'on tiene un tiempo de llegada y un tiempo de salida deseado, la formulaci\'on tiene como objetivo principal encontrar una asignaci\'on de tiempos de aterrizaje para cada avi\'on que cumpla rigurosamente con todas las restricciones del problema. La forma que los autores tuvieron para solucionar el problema fue la siguiente:
+
+\begin{enumerate}
+    \item \textbf{Formulaci\'on MILP:} Formularon el problema como un programa lineal entero mixto (MILP) con una funci\'on objetivo que minimiza la suma de las desviaciones ponderadas de los tiempos de aterrizaje objetivo. Esta formulaci\'on proporciona una base s\'olida para encontrar soluciones \'optimas.
+
+    \item \textbf{Refuerzo de las Relajaciones Lineales:} Para mejorar la eficacia de la resoluci\'on del MILP, introdujeron restricciones adicionales que modelan diferentes aspectos pr\'acticos del problema. Estas restricciones incluyen la elecci\'on de la funci\'on objetivo, las restricciones de precedencia entre aterrizajes, el equilibrio de la carga de trabajo de las pistas, entre otros aspectos relevantes.
+
+    \item \textbf{Resoluci\'on \'Optima:} Resolvieron el MILP de forma \'optima utilizando una b\'usqueda en \'arbol basada en programaci\'on lineal. Este enfoque garantiza la obtenci\'on de soluciones precisas y \'optimas para el problema.
+
+    \item \textbf{Algoritmo Heur\'istico:} Adem\'as de la resoluci\'on \'optima, presentaron un algoritmo heur\'istico eficaz para el problema. Este algoritmo ofrece soluciones de alta calidad en tiempos m\'as cortos, lo que es beneficioso para aplicaciones en tiempo real o situaciones en las que la optimizaci\'on precisa es menos cr\'itica.
+\end{enumerate}
+
+El art\'iculo enriquece su contenido al presentar resultados computacionales detallados para ambos algoritmos en varios problemas de prueba que involucran hasta 50 aviones y cuatro pistas de aterrizaje. Estos resultados son esenciales para evaluar el rendimiento de la formulaci\'on propuesta en situaciones del mundo real. Adem\'as, demuestran la eficiencia de los algoritmos de optimizaci\'on utilizados, as\'i como la capacidad de la formulaci\'on para encontrar soluciones factibles y \'optimas en un tiempo razonable. \\
+
+Despu\'es de la investigaci\'on del caso est\'atico, los mismos autores se embarcaron en la investigaci\'on del caso din\'amico, que se describe en el art\'iculo "Displacement Problem and Dynamically Scheduling Aircraft Landings." Este enfoque din\'amico aborda la programaci\'on de aterrizajes de aviones en tiempo real, donde las decisiones deben tomarse de manera continua y adaptarse a las cambiantes condiciones operativas en el aeropuerto. Para abordar este desaf\'io, los autores definieron un "problema de desplazamiento", que se caracteriza por la toma de decisiones interconectadas y secuenciales. Luego, aplicaron este problema de desplazamiento al contexto din\'amico de programaci\'on de aterrizajes de aviones. En t\'erminos de soluci\'on, los autores emplearon una formulaci\'on de programaci\'on lineal entera mixta (MILP) que busca minimizar las desviaciones con respecto a los tiempos de aterrizaje objetivos. Adem\'as, introdujeron restricciones pr\'acticas que reflejan aspectos del entorno operativo, como la elecci\'on de la funci\'on objetivo, restricciones de precedencia y equilibrio de la carga de trabajo de las pistas, entre otros. La resoluci\'on del MILP se logr\'o mediante una b\'usqueda en \'arbol basada en programaci\'on lineal, y tambi\'en se present\'o un algoritmo heur\'istico eficaz para abordar este problema din\'amico. Los resultados computacionales se documentaron para ambos enfoques (MILP y heur\'istica) en varios problemas de prueba que involucran hasta 500 aviones y cinco pistas. Estos resultados destacan la utilidad y aplicabilidad de las estrategias propuestas en situaciones de alta complejidad y dinamismo en la programaci\'on de aterrizajes de aeronaves en aeropuertos~\cite{Beasley2004}. \\
+
+El art\'iculo "Hybrid Method for Aircraft Landing Scheduling Based on a Job Shop Formulation,"~\cite{Bencheikh2009} publicado en 2009, propone un m\'etodo h\'ibrido para la programaci\'on de aterrizajes de aviones basado en una formulaci\'on de taller de trabajo. El objetivo del art\'iculo es estudiar el caso de m\'ultiples pistas del problema est\'atico de aterrizaje de aeronaves (ALP), donde todos los datos se conocen de antemano. En la primera parte del trabajo, se propone una formulaci\'on del problema como un modelo de programaci\'on matem\'atica para reducir el n\'umero de restricciones y dar una formulaci\'on m\'as rigurosa. Esta formulaci\'on tiene como objetivo proporcionar una representaci\'on precisa del problema ALP y establecer una base s\'olida para su resoluci\'on. En la segunda parte, se formula el ALP como un problema de programaci\'on de taller de trabajo (JSSP) basado en una representaci\'on gr\'afica. Esta formulaci\'on busca mostrar la relaci\'on entre el ALP como un problema de programaci\'on espec\'ifico y el JSSP NP-duro como una programaci\'on m\'as general. Este enfoque ayuda a comprender c\'omo los desaf\'ios de programaci\'on de aterrizaje se relacionan con problemas m\'as amplios de programaci\'on de talleres de trabajo. Finalmente, para resolver el ALP, se propone un m\'etodo h\'ibrido que combina algoritmos gen\'eticos con algoritmos de optimizaci\'on por colonia de hormigas. Este enfoque innovador aprovecha las ventajas de ambos m\'etodos para abordar eficazmente el problema de programaci\'on de aterrizajes. El art\'iculo representa una contribuci\'on m\'as reciente a la investigaci\'on del ALP, incorporando enfoques modernos de resoluci\'on y an\'alisis de problemas de programaci\'on de aterrizajes de aviones en aeropuertos~\cite{Bencheikh2009}~\cite{Colorni1994}. \\
+
+El problema de programaci\'on de aterrizaje de aeronaves (ALP) es un desaf\'io complejo en el campo de la optimizaci\'on y la gesti\'on de operaciones a\'ereas. Dada su naturaleza NP-duro, se han desarrollado diversos enfoques y algoritmos para abordar este problema con eficacia. A continuaci\'on, se detallan algunos de los algoritmos m\'as destacados y con mejores resultados:
+
+\begin{enumerate}
+    \item \textbf{Algoritmo Eficiente para una Secuencia de Aterrizaje Dada:} Este algoritmo, propuesto por Awasthi et al.~\cite{awasthi2013aircraft}, ofrece una soluci\'on exacta en tiempo polin\'omico para una variante del problema que se centra en optimizar una secuencia de aterrizaje factible en el caso de una sola pista. El tiempo de ejecuci\'on de este algoritmo es del orden de $O(N^3)$, donde $N$ representa el n\'umero de aeronaves. Esta soluci\'on exacta es fundamental cuando se necesita una precisi\'on extrema en la secuencia de aterrizaje. Este algoritmo, tambi\'en propuesto por Awasthi et al.~\cite{awasthi2013aircraft}, se destaca por proporcionar una soluci\'on eficiente que optimiza tanto las secuencias como los tiempos de aterrizaje para un conjunto de aviones. Su enfoque se centra en la coordinaci\'on precisa de las aeronaves para minimizar las demoras y garantizar una programaci\'on fluida y eficaz.
+    
+    \item \textbf{Heur\'isticas Simples:} Adem\'as de los enfoques exactos, se han desarrollado heur\'isticas simples para abordar el ALP. Estas heur\'isticas ofrecen soluciones aproximadas que son r\'apidas de calcular. Aunque no garantizan la \'optima global, son \'utiles en situaciones en las que se necesita una soluci\'on r\'apida y aceptable~\cite{salehipour2018algorithm}.
+    
+    \item \textbf{Enfoque de Programaci\'on Lineal Entera Mixta:} Este enfoque se distingue por proponer una soluci\'on exacta que involucra programaci\'on lineal entera mixta. Utiliza t\'ecnicas de programaci\'on lineal para abordar el problema de manera precisa y rigurosa. Este enfoque es particularmente valioso cuando se requiere una soluci\'on \'optima y se dispone del tiempo y los recursos necesarios para llevar a cabo una optimizaci\'on exhaustiva~\cite{IKLI2021105336}.
+\end{enumerate}
+
+Estos algoritmos representan una muestra de los diversos enfoques utilizados en la investigaci\'on del ALP. La elecci\'on del algoritmo m\'as adecuado depende de las caracter\'isticas espec\'ificas del problema y de los objetivos de optimizaci\'on que se persigan. Cada uno de estos enfoques contribuye al desarrollo de soluciones efectivas para la programaci\'on de aterrizajes de aeronaves, un aspecto crucial para la eficiencia y la seguridad de las operaciones a\'ereas.
+
+En relaci\'on con los resultados obtenidos, se destaca que la soluci\'on basada en programaci\'on lineal entera mixta ha demostrado obtener mejores resultados en t\'erminos de calidad de soluci\'on y eficiencia computacional, consolid\'andose como un enfoque prometedor. A medida que los aeropuertos y las demandas de tr\'afico a\'ereo contin\'uan creciendo, la necesidad de soluciones innovadoras y eficaces en la programaci\'on de aterrizajes se vuelve a\'un m\'as apremiante. Los investigadores y profesionales de la aviaci\'on est\'an abocados a explorar nuevas t\'ecnicas y enfoques que puedan abordar los desaf\'ios emergentes, como la gesti\'on de flujos de tr\'afico a\'ereo cada vez m\'as complejos y la consideraci\'on de aspectos ambientales y de sostenibilidad. En resumen, el estado actual de la investigaci\'on en el ALP refleja un campo din\'amico y vital que contin\'ua avanzando en la b\'usqueda de soluciones para optimizar la programaci\'on de aterrizajes de aeronaves y contribuir as\'i a la eficiencia y la seguridad en las operaciones a\'ereas.
+
+\newpage
+\section{Modelo Matem\'atico}
+Este modelo matem\'atico se deriva de la formulaci\'on propuesta por Beasley~\cite{beasley1990scheduling}. Beasley defini\'o un modelo que ha sido ampliamente utilizado en diversas investigaciones relacionadas con este tema.
+
+\subsection{Par\'ametros}
+\begin{align*}
+p & : \text{N\'umero total de aviones} \\
+E_i & : \text{Tiempo m\'as temprano de aterrizaje para el avi\'on } i, \quad i = 1,2,\ldots,p \\
+T_i & : \text{Tiempo ideal de aterrizaje para el avi\'on } i, \quad i = 1,2,\ldots,p \\
+L_i & : \text{Tiempo m\'as tard\'io de aterrizaje para el avi\'on } i, \quad i = 1,2,\ldots,p \\
+g_i & : \text{Penalizaci\'on del avi\'on } i \text{ por aterrizar antes de } T_i, \quad i = 1,2,\ldots,p \\
+h_i & : \text{Penalizaci\'on del avi\'on } i \text{ por aterrizar despu\'es de } T_i, \quad i = 1,2,\ldots,p \\
+S_{ij} & : \text{Separaci\'on, en unidades de tiempo, entre el aterrizaje de los aviones } i \text{ y } j, \quad i, j = 1,2,\ldots,p \\
+\end{align*}
+
+\subsection{Variables}
+\begin{align*}
+x_i & : \text{Tiempo de aterrizaje del avi\'on } i, \quad i = 1,2,\ldots,p \\
+\delta_{ij} & : \text{Variable binaria que indica si el avi\'on } i \text{ aterriza antes que el avi\'on } j, \quad i,j = 1,2,\ldots,p \\
+\end{align*}
+
+
+\subsection{Funci\'on Objetivo}
+Minimizar la funci\'on objetivo que considera las penalizaciones por aterrizaje temprano y tard\'io:
+\[
+\min \sum_{i=1}^{p} g_i\max[0,T_i - x_i] + h_i\max[0,x_i - T_i]
+\]
+\[
+\delta_{ij} + \delta_{ji} = 1, \quad i,j = 1,2,\ldots,p \quad i \neq j
+\]
+
+\subsection{Restricciones Duras}
+\begin{align*}
+\text{Restricci\'on de la ventana de tiempo:} & \quad E_i \leq x_i \leq L_i, \quad i = 1,2,\ldots,p \\
+\text{Separaci\'on entre aterrizajes:} & \quad x_j - x_i \geq S_{ij},\quad x_i < x_j \quad i, j = 1,2,\ldots,p \\
+\end{align*}
+
+\subsection{Restricciones Blandas}
+\begin{align*}
+\text{Restricci\'on de aterrizaje ideal:} & \quad \text{Minimizar } \{\max[0,T_i - x_i] + \max[0,x_i - T_i]\}, \quad i = 1,2,\ldots,p \\
+\end{align*}
+
+\section{Representaci\'on}
+\begin{comment}
+Representaci\'on de \textbf{soluciones} (arreglos, matrices, etc.). En caso de t\'ecnicas completas indicar variables y dominios. Incluir justificaci\'on y ejemplos para mayor claridad.
+\end{comment}
+
+En la soluci\'on implementada, se han empleado dos representaciones en casos espec\'ificos. En el contexto del algoritmo Greedy, se utiliza una representaci\'on que consiste en una lista que almacena los valores $x_i$, indicando la posici\'on temporal del avi\'on $i$-\'esimo. Esta elecci\'on se realiza por conveniencia, ya que al momento de llevar a cabo el algoritmo Greedy y buscar la soluci\'on m\'as eficiente, esta estructura resulta m\'as eficaz y facilita la obtenci\'on de resultados \'optimos.
+
+
+En el caso de la implementaci\'on de Tabu Search, se emplea la siguiente representaci\'on: $A_1, A_2, ..., A_n$, donde $A_i$ representa el identificador del avi\'on que ocupa la posici\'on i-\'esima en la secuencia temporal de aterrizajes. Esta elecci\'on se motiva por la necesidad de evitar demoras significativas en la b\'usqueda de soluciones \'optimas. La raz\'on detr\'as de esta elecci\'on radica en que, al utilizar la misma representaci\'on que en el apartado Greedy, ser\'ia necesario ajustar la posici\'on de cada avi\'on por un factor, lo que prolongar\'ia considerablemente el tiempo requerido para encontrar una soluci\'on de calidad. Adem\'as, sumar o restar un factor muy grande podr\'ia resultar en ubicaciones no exploradas. Por lo tanto, se ha optado por calcular la secuencia $A$ y, posteriormente, determinar las posiciones \'optimas a partir de esta secuencia.
+
+
+\section{Descripci\'on del algoritmo}
+\begin{comment}
+C\'omo fue implementada la soluci\'on. Interesa la implementaci\'on particular m\'as que el algoritmo gen\'erico, es decir, si se tiene que implementar SA, lo que se espera es que se explique en pseudoc\'odigo la estructura
+general y en p\'arrafos explicativos c\'omo fue implementada cada parte para su problema particular. Si
+se utilizan operadores/movimientos se debe justificar por qu\'e se utilizaron dichos operadores/movimientos. 
+En caso de una t\'ecnica completa, describir detalles relevantes del proceso, si se utiliza recursi\'on o no, explicar c\'omo se van construyendo soluciones, cu\'ando se revisan restricciones, c\'omo se registran conflictos, etc. En este punto no se espera que se incluya c\'odigo, eso va aparte.
+\end{comment}
+\subsection{Greedy}
+El algoritmo Greedy implementado sigue una estructura clara y eficiente para abordar el ALSP y generar una soluci\'on inicial. La descripci\'on detallada se presenta a continuaci\'on.
+
+\begin{algorithm}
+\caption{Implementaci\'on Greedy}
+\begin{algorithmic}
+\Function{Greedy}{}
+\State $X \gets \{t_1\}$ \Comment{Inicializaci\'on con un valor inicial}
+\For{$i \in \{2,...,n\}$}
+\State $X \gets \text{miopeFunction}(X,i)$ \Comment{Llamada a la funci\'on miope}
+\EndFor
+\State \Return X
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+La implementaci\'on del algoritmo Greedy sigue una estructura com\'un, comenzando con la definici\'on de un valor inicial y luego aplicando una funci\'on miope en cada iteraci\'on. La funci\'on miope se encarga de a\~{n}adir el avi\'on i-\'esimo en una posici\'on temporal \'optima. Siempre se eval\'ua la posibilidad de colocarlo temporalmente despu\'es o antes de todos los dem\'as aviones, eligiendo el tiempo asignado de manera que sea mayor o menor que todos los dem\'as. El objetivo es situar el avi\'on en su posici\'on \'optima, y en caso de que no sea posible, se coloca lo m\'as cercano posible.
+
+Esta estrategia de Greedy se ha dise\~{n}ado para manejar de manera efectiva el ALSP, optimizando los horarios de aterrizaje de las aeronaves. La simplicidad y eficacia de este enfoque lo convierten en una opci\'on s\'olida para la etapa inicial de la resoluci\'on del problema, contribuyendo al \'exito global del algoritmo implementado.
+
+
+\subsection{Tabu Search}
+Es crucial tener en cuenta que la representaci\'on utilizada consiste en una secuencia ordenada seg\'un el orden temporal de cada avi\'on $A$, lo que implica la necesidad de obtener de manera \'optima las posiciones de cada avi\'on $A_i$ en dicha secuencia. Con esta premisa, se presenta a continuaci\'on una descripci\'on general de la implementaci\'on de la soluci\'on mediante el uso de Tabu Search.
+
+\begin{algorithm}
+\caption{Tabu Search implementation}
+\begin{algorithmic}
+\Function{Tabu Search}{$S_c,value$}
+\State $iterations \gets 100$
+\State $Tabu_{list} \gets \{\}$
+\State $S_{best} \gets S_c$
+\While{$Iterations > 0$}
+\State $moves \gets getMoves(S_c)$
+\State $S_v \gets \text{select from moves the best non tabu point}$
+\State $S_c \gets S_v$
+\State $Tabu_{list}.push(S_c)$
+\If{$EvalFunction(S_c) < EvalFunction(S_best)$}
+    \State $Sbest \gets S_c$
+\EndIf
+\EndWhile
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Funci\'on de Evaluaci\'on}
+El costo de la soluci\'on actual se calcula mediante la funci\'on objetivo definida, la cual eval\'ua la calidad de la asignaci\'on de aterrizajes. Adem\'as, se incorpora una penalizaci\'on adicional por la cantidad de restricciones incumplidas. Esta estrategia busca penalizar de manera proporcional las soluciones infactibles y favorecer aquellas que cumplen con todas las restricciones establecidas. La inclusi\'on de esta penalizaci\'on en el c\'alculo del costo contribuye a mantener la viabilidad y calidad de las soluciones generadas, priorizando aquellas que se ajustan adecuadamente a los requisitos y restricciones.
+
+
+\subsubsection{Algoritmo posiciones optimas de una secuencia.}
+Este proceso se realiza a trav\'es de la aplicaci\'on de un algoritmo dise\~{n}ado por \textbf{Abhinav Awasthi}, el cual, dado una secuencia espec\'ifica, proporciona ubicaciones m\'as \'optimas con una complejidad de $O(n^3)$, como se detalla en su investigaci\'on~\cite{awasthi2013aircraft}. Inicialmente, el algoritmo establece una posici\'on inicial considerando las separaciones, y mediante un c\'alculo de la holgura entre la soluci\'on actual y la \'optima posible, reubica temporalmente la posici\'on para reducir el costo. Cabe destacar que el algoritmo implementado es una variante del trabajo de \textbf{Abhinav Awasthi}, adaptada para su uso espec\'ifico con Tabu Search. En el mismo documento, se aborda un enfoque similar a esta soluci\'on pero empleando Simulated Annealing (SA).
+
+\subsubsection{Movimiento}
+Dado que existe un algoritmo permite encontrar las ubicaciones \'optimas para cualquier secuencia dada, la principal complejidad radica en definir un movimiento sobre la secuencia. Este movimiento consiste en intercambiar dos elementos contiguos o intercambiar el inicio y el final.
+
+\subsubsection{Criterio de terminaci\'on}
+El criterio de terminaci\'on se establece cuando se alcanza una cantidad fijada de iteraciones l\'imite o cuando todo el vecindario est\'a presente en la lista tab\'u.
+
+\subsubsection{Tabu List}
+Para la implementaci\'on de la lista tab\'u, se opt\'o por estructurarla utilizando tanto una cola como un conjunto. La elecci\'on de utilizar un conjunto se fundamenta en su mayor eficiencia para verificar la pertenencia de elementos en comparaci\'on con una cola en implementaciones comunes. La lista tab\'u desempe\~{n}a un papel crucial en el algoritmo Tabu Search, ya que registra las soluciones recientemente exploradas para evitar la revisi\'on repetida de las mismas configuraciones, contribuyendo as\'i a diversificar la b\'usqueda y evitar ciclos innecesarios. En este contexto, se decidi\'o utilizar un Tabu List de tama\~{n}o 30, bas\'andose en resultados satisfactorios obtenidos en los casos de prueba realizados. La elecci\'on del tama\~{n}o de la lista tab\'u es un aspecto clave en el rendimiento del algoritmo, ya que afecta la intensificaci\'on y diversificaci\'on de la b\'usqueda. El valor seleccionado de 30 se ajust\'o adecuadamente para el problema espec\'ifico del ALSP, proporcionando un equilibrio efectivo entre exploraci\'on y explotaci\'on de soluciones.
+
+\section{Experimentos}
+\begin{comment}
+    Se necesita saber c\'omo experimentaron, c\'omo definieron par\'ametros, 
+c\'omo los fueron modificando, cu\'ales problemas/instancias se estudiaron y por qu\'e, etc. 
+Recuerde que las t\'ecnicas completas son deterministas y las t\'ecnicas incompletas son estoc\'asticas.
+\end{comment}
+\subsubsection{Descripci\'on instancias de pruebas}
+Las instancias de prueba siguen la siguiente estructura:
+
+\[ p \]
+\[ E_1 \quad T_1 \quad L_1 \quad G_1 \quad H_1 \]
+\[ S_{11} \quad S_{12} \quad ... \quad S_{1p} \]
+\[ \vdots \]
+\[ E_p \quad T_p \quad L_p \quad G_p \quad H_p \]
+\[ S_{p1} \quad S_{p2} \quad ... \quad S_{pp} \]
+
+Donde \( p \) representa el n\'umero de instancias, con \( p \) tomando valores en el rango \(\{1, 500\}\). Es relevante se\~{n}alar que \( E_i, T_i, L_i, S_{ij} \) son todos n\'umeros enteros, mientras que \( G_i \) y \( H_i \) son valores reales.
+
+Este formato proporciona una representaci\'on estructurada y clara de las caracter\'isticas de cada instancia, permitiendo una f\'acil comprensi\'on y manipulaci\'on de los par\'ametros involucrados en las pruebas del algoritmo.
+
+\subsubsection{Hardware de experimentaci\'on}
+
+El hardware utilizado para llevar a cabo los experimentos consta de las siguientes especificaciones: \\
+Procesador: AMD Ryzen 5 3600 con una velocidad de 3.60 GHz. \\
+Memoria RAM: 16 GB. \\
+Sistema Operativo: Sistema de 64 bits. \\
+Estas especificaciones proporcionan una base robusta y eficiente para la ejecuci\'on de los experimentos, asegurando un rendimiento adecuado durante las pruebas y an\'alisis realizados.
+
+\subsubsection{Caracter\'isticas de la experimentaci\'on}
+Se llevar\'a a cabo una evaluaci\'on exhaustiva de la calidad de la respuesta en funci\'on de \( p \), donde \( p \) representa el tama\~{n}o de la entrada. Este an\'alisis permitir\'a comprender el comportamiento del costo en relaci\'on con la dimensi\'on de la instancia del problema, brindando informaci\'on valiosa sobre el rendimiento del algoritmo en diversas situaciones.
+
+Se establecer\'a un tiempo l\'imite de 5 minutos como criterio para la ejecuci\'on de cada prueba. Este l\'imite se ha definido como un tiempo aceptable que simula condiciones realistas, proporcionando una m\'etrica razonable para la evaluaci\'on del desempe\~{n}o del algoritmo en un escenario pr\'actico.
+
+Como criterio de terminaci\'on para el algoritmo Tabu Search, se fijar\'a en 100 iteraciones. Esta elecci\'on se basa en la consideraci\'on de que un n\'umero sustancialmente mayor de iteraciones podr\'ia resultar en tiempos de prueba excesivamente prolongados. Por lo tanto, 500 iteraciones se establecen como un umbral razonable para equilibrar la precisi\'on del algoritmo con la eficiencia en el tiempo de ejecuci\'on de las pruebas.
+
+\section{Resultados}
+
+Los resultados obtenidos de los tests experimentales se detallan en la Tabla \ref{tab:resultados_tests}. Cada test se identifica por su n\'umero, y se especifica el tama\~{n}o de la entrada (\(p\)), el costo de la soluci\'on encontrado y el tiempo de ejecuci\'on en segundos.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+N\'umero de Test & Tama\~{n}o de Entrada (\(p\)) & Costo de Soluci\'on & Tiempo de Soluci\'on (seg) \\
+\hline
+1 & 10 & 1150 & 0.03125 \\
+2 & 15 & 1720 & 0.125 \\
+3 & 20 & 1610 & 0.265620 \\
+4 & 20 & 27560 & 0.265625 \\
+5 & 44 & 1648 & 2.375 \\
+6 & 150 & 34165 & 96.0781 \\
+\hline
+\end{tabular}
+\caption{Resultados de los Tests}
+\label{tab:resultados_tests}
+\end{table}
+
+Se evidencia una relaci\'on directa entre el tama\~{n}o de la entrada (\(p\)) y el tiempo de ejecuci\'on, lo cual era de esperar. Sin embargo, es interesante notar que no existe una correlaci\'on lineal entre el tama\~{n}o de la soluci\'on y su costo asociado. Este fen\'omeno subraya la complejidad intr\'inseca del Aircraft Landing Scheduling Problem (ALSP), donde la optimizaci\'on no siempre se traduce en un menor costo.
+
+Al analizar detenidamente los resultados, se destaca el Test 4, donde se observa un aumento significativo y an\'omalo en el costo de la soluci\'on. Este comportamiento podr\'ia estar vinculado a la elecci\'on de par\'ametros espec\'ificos del algoritmo, como la cantidad de iteraciones o el tama\~{n}o de la lista tab\'u. La variabilidad en estos par\'ametros puede tener un impacto significativo en la calidad de la soluci\'on obtenida, y se considera un aspecto clave en la calibraci\'on del algoritmo.
+
+Cabe mencionar que el tiempo de ejecuci\'on para \(p = 150\) se incrementa de manera considerable, atribuido al costo asint\'otico de la soluci\'on (\(O(N^4)\)). La elecci\'on de par\'ametros \'optimos se vuelve cr\'itica en estas instancias de gran tama\~{n}o.
+
+En resumen, los resultados obtenidos resaltan la importancia de la calibraci\'on precisa de par\'ametros y muestran la complejidad inherente del ALSP. El an\'alisis detallado de cada prueba proporciona una visi\'on clara de c\'omo el algoritmo responde a diferentes instancias, contribuyendo as\'i a la comprensi\'on de su desempe\~{n}o y posibles \'areas de mejora.
+
+
+\section{Conclusiones}
+
+En el presente informe se ha desarrollado una investigaci\'on acerca de la combinaci\'on de estrategias Greedy y Tabu Search para abordar el Aircraft Landing Scheduling Problem (ALSP). Los resultados obtenidos indican que esta combinaci\'on constituye un enfoque efectivo para la optimizaci\'on de horarios de aterrizaje de aeronaves. El an\'alisis de los resultados experimentales confirma la relaci\'on directamente proporcional entre el tama\~{n}o del problema y el tiempo de ejecuci\'on del algoritmo implementado. Este comportamiento, influido por la complejidad asint\'otica del algoritmo, subraya la importancia de considerar la eficiencia computacional al enfrentar instancias m\'as grandes del problema. La elecci\'on cuidadosa de par\'ametros, estructuras de datos y estrategias de exploraci\'on y explotaci\'on en el contexto de Tabu Search ha demostrado ser cr\'itica para la obtenci\'on de soluciones de alta calidad, identificando configuraciones que logran un equilibrio \'optimo entre exploraci\'on y explotaci\'on. En relaci\'on con la literatura existente, se destaca la influencia positiva de investigaciones previas, como el trabajo de Awasthi et al.~\cite{awasthi2013aircraft}, que ha aportado valiosas ideas para la mejora de la propuesta implementada. No obstante, es fundamental reconocer las limitaciones del enfoque propuesto. La dependencia de los par\'ametros del algoritmo, como la cantidad de iteraciones, el tama\~{n}o de la lista tab\'u y la estrategia de exploraci\'on/explotaci\'on, presenta un desaf\'io en la calibraci\'on del algoritmo, especialmente para instancias de gran tama\~{n}o o con restricciones complejas. Adicionalmente, se identifica como desventaja de la soluci\'on mediante Tabu Search su alto consumo de memoria. Adem\'as, desde el punto de vista de la eficiencia, buscar la posici\'on \'optima de una secuencia dada, aunque reduce el problema, introduce una complejidad de $O(N^3)$, resultando costoso para valores elevados de $N$. La complejidad asint\'otica del algoritmo de Tabu Search, $O(N^4)$, implica un aumento considerable en el tiempo de ejecuci\'on para instancias de gran tama\~{n}o. A pesar de estos retos, los resultados positivos obtenidos y la mejora continua de la propuesta ofrecen perspectivas prometedoras para futuras investigaciones, especialmente en la adaptaci\'on de estrategias m\'as eficientes para instancias m\'as complejas del problema de programaci\'on de aterrizajes de aeronaves.
+
+
+
+\begin{comment}
+Indicando toda la informaci\'on necesaria de acuerdo al tipo de documento revisado. Todas las referencias deben ser citadas en el documento.
+\end{comment}
+
+\bibliographystyle{plain}
+\bibliography{Referencias}
+
+\end{document} 

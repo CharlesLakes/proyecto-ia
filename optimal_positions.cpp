@@ -1,7 +1,30 @@
 #include <bits/stdc++.h> 
 #include "defs.hpp"
 
+/*
+  Descripción: Función que calcula el tiempo de demora (D) para una posición de aterrizaje dada y un tiempo objetivo.
+
+  Parámetros:
+    - st_value: Valor del tiempo asignado para la aeronave en la secuencia.
+    - t: Tiempo objetivo.
+
+  Retorna:
+    - Valor del tiempo de demora (D).
+*/
 ll compute_D(ll st_value,ll t){return st_value - t;}
+
+/*
+  Descripción: Función que calcula el tiempo de salida anticipada (ES) para una posición de aterrizaje dada.
+
+  Parámetros:
+    - pos: Posición actual en la secuencia de aterrizaje.
+    - ST: Vector de tiempos asignados para las aeronaves en la secuencia actual.
+    - positions: Vector que representa la secuencia actual de aterrizaje.
+    - airplanes: Vector de estructuras airplane_data que contiene la información de las aeronaves.
+
+  Retorna:
+    - Valor del tiempo de salida anticipada (ES).
+*/
 
 ll compute_ES(ll pos,vector<ll> ST,vector<ll> positions,vector<airplane_data> airplanes){
     if(!pos) return ST[pos] - airplanes[positions[pos]].e;
@@ -10,6 +33,15 @@ ll compute_ES(ll pos,vector<ll> ST,vector<ll> positions,vector<airplane_data> ai
     return ST[pos] - max(airplanes[positions[pos]].e,sp);
 }
 
+
+/*
+  Descripción: Función que inicializa los tiempos asignados (ST) para una secuencia dada de aeronaves.
+
+  Parámetros:
+    - ST: Vector de tiempos asignados a inicializar.
+    - positions: Vector que representa la secuencia actual de aterrizaje.
+    - airplanes: Vector de estructuras airplane_data que contiene la información de las aeronaves.
+*/
 void init_ST(vector<ll> &ST,vector<ll> positions,vector<airplane_data> airplanes){
     ll n = positions.size();
     ST[n - 1] = airplanes[positions[n - 1]].l;
@@ -21,7 +53,13 @@ void init_ST(vector<ll> &ST,vector<ll> positions,vector<airplane_data> airplanes
     }
 
 }
+/*
+  Descripción: Función que calcula las posiciones óptimas de aterrizaje para una secuencia dada de aeronaves.
 
+  Parámetros:
+    - positions: Vector que representa la secuencia actual de aterrizaje.
+    - airplanes: Vector de estructuras airplane_data que contiene la información de las aeronaves.
+*/
 vector<ll> get_optimal_positions(vector<ll> positions,vector<airplane_data> airplanes){
     ll n = positions.size();
     vector<ll> ST(n),D(n),ES(n);
