@@ -15,7 +15,8 @@
     - bool find(vector<ll> &values): Verifica si una solución está en la lista Tabú.
     - void pop(): Elimina la solución más antigua de la lista Tabú.
     - void push(vector<ll> &values): Agrega una nueva solución a la lista Tabú, gestionando su frecuencia.
-*/struct TabuList{
+*/
+struct TabuList{
     ll N;
     map<vector<ll>,ll> m_values;
     queue<vector<ll>> q_values;
@@ -103,7 +104,6 @@ vector<ll> TabuSearch(vector<ll> Sc,ll v_best,vector<airplane_data> airlpanes){
     }
 
     return Sbest;
-
 }
 
 
