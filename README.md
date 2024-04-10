@@ -26,3 +26,5 @@ En el caso que es muy complicado usar los comandos del *MAKEFILE*, puedes hacerl
 ./main < nombre_archivo_entrada
 ```
 (de esta forma redirigues el contenido del archivo como entrada estandar)
+
+$\sqrt{n}$
